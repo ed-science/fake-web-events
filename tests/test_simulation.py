@@ -9,25 +9,24 @@ from datetime import datetime, timedelta
 def mock_simulation():
     random.seed(0)
     Faker.seed(0)
-    simulation = Simulation(10, 10000, 10, datetime(2020, 7, 7, 0, 0, 0, 0))
-    return simulation
+    return Simulation(10, 10000, 10, datetime(2020, 7, 7, 0, 0, 0, 0))
 
 
 @pytest.fixture()
 def mock_create_sessions(mock_simulation):
-    for idx in range(100):
+    for _ in range(100):
         mock_simulation.create_sessions()
 
 
 @pytest.fixture()
 def mock_wait(mock_simulation):
-    for idx in range(100):
+    for _ in range(100):
         mock_simulation.wait()
 
 
 @pytest.fixture()
 def mock_update(mock_simulation):
-    for idx in range(100):
+    for _ in range(100):
         mock_simulation.update_all_sessions()
         mock_simulation.create_sessions()
         mock_simulation.wait()
@@ -56,5 +55,5 @@ class TestSimulation:
     def test_max_unique_user_ids(self, mock_simulation):
         # after running the simulation for some time, the max unique user ids must be equal to the pool size
         events = list(mock_simulation.run(2))
-        user_domain_ids = set(event['user_domain_id'] for event in events)
+        user_domain_ids = {event['user_domain_id'] for event in events}
         assert len(user_domain_ids) == 10
